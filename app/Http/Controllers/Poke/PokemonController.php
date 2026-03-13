@@ -19,47 +19,66 @@ class PokemonController extends Controller
 
     public function index(SearchPokemonRequest $request)
     {
+        $user = auth()->user();
+        $page = $request->input('page', 1);
+        $name = $request->input('name');
+ 
         try {
-            $page = $request->input('page', 1);
-            $name = $request->input('name');
-
+            if ($user->isViewer()) {
+                $pokemons = Pokemon::with('types')->orderBy('name');
+ 
+                if ($name) {
+                    $pokemons->where('name', 'like', "%{$name}%");
+                }
+ 
+                $paginated  = $pokemons->paginate(20, ['*'], 'page', $page);
+ 
+                return view('pokemon.index', [
+                    'pokemons'    => $paginated->items(),
+                    'total'       => $paginated->total(),
+                    'currentPage' => $paginated->currentPage(),
+                    'totalPages'  => $paginated->lastPage(),
+                    'source'      => 'database',
+                ]);
+            }
+ 
             if ($name) {
                 $pokemon = $this->pokeApiClient->getPokemonByName($name);
-                
+ 
                 if (!$pokemon) {
                     return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
                 }
-
+ 
                 return view('pokemon.show', ['pokemon' => $pokemon]);
             }
-
+ 
             $data = $this->pokeApiClient->getPokemon($page);
-
+ 
             if (!$data) {
                 return view('pokemon.index', [
-                    'pokemons' => [],
-                    'total' => 0,
+                    'pokemons'    => [],
+                    'total'       => 0,
                     'currentPage' => $page,
-                    'totalPages' => 0,
+                    'totalPages'  => 0,
+                    'source'      => 'api',
                 ])->with('error', 'Não foi possível carregar os pokémons. Tente novamente mais tarde.');
             }
-
-            $pokemons   = $data['results'] ?? [];
-            $total      = $data['count'] ?? 0;
-            $totalPages = ceil($total / 20);
-
+ 
             return view('pokemon.index', [
-                'pokemons' => $pokemons,
-                'total' => $total,
+                'pokemons'    => $data['results'] ?? [],
+                'total'       => $data['count'] ?? 0,
                 'currentPage' => $page,
-                'totalPages' => $totalPages,
+                'totalPages'  => ceil(($data['count'] ?? 0) / 20),
+                'source'      => 'api',
             ]);
+ 
         } catch (\Exception $e) {
             return view('pokemon.index', [
-                'pokemons' => [],
-                'total' => 0,
+                'pokemons'    => [],
+                'total'       => 0,
                 'currentPage' => 1,
-                'totalPages' => 0,
+                'totalPages'  => 0,
+                'source'      => $user->isViewer() ? 'database' : 'api',
             ])->with('error', 'Ocorreu um erro ao carregar os pokémons. Tente novamente mais tarde.');
         }
     }

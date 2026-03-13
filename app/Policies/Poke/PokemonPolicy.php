@@ -6,15 +6,23 @@ use App\Models\User;
 
 class PokemonPolicy
 {
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
-    {
-    }
-
-    public function import(User $user)
+    public function viewAny(User $user): bool
     {
         return true;
+    }
+
+    public function import(User $user): bool
+    {
+        return in_array($user->role, ['editor', 'admin']);
+    }
+
+    public function delete(User $user): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function favorite(User $user): bool
+    {
+        return in_array($user->role, ['editor', 'admin']);
     }
 }
