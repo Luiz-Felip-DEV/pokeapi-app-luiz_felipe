@@ -5,61 +5,96 @@ namespace App\Http\Controllers\Poke;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PokeApiClient;
+use App\Services\PokemonImporter;
+use App\Models\Poke\Pokemon;
 use App\Http\Requests\Poke\SearchPokemonRequest;
 
 class PokemonController extends Controller
 {
-    public function __construct(PokeApiClient $pokeApiClient)
+    public function __construct(PokeApiClient $pokeApiClient, PokemonImporter $pokemonImporter)
     {
-        $this->pokeApiClient = $pokeApiClient;
+        $this->pokeApiClient   = $pokeApiClient;
+        $this->pokemonImporter = $pokemonImporter;
     }
 
     public function index(SearchPokemonRequest $request)
     {
-        $page = $request->input('page', 1);
-        $name = $request->input('name');
+        try {
+            $page = $request->input('page', 1);
+            $name = $request->input('name');
 
-        if ($name) {
+            if ($name) {
+                $pokemon = $this->pokeApiClient->getPokemonByName($name);
+                
+                if (!$pokemon) {
+                    return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
+                }
+
+                return view('pokemon.show', ['pokemon' => $pokemon]);
+            }
+
+            $data = $this->pokeApiClient->getPokemon($page);
+
+            if (!$data) {
+                return view('pokemon.index', [
+                    'pokemons' => [],
+                    'total' => 0,
+                    'currentPage' => $page,
+                    'totalPages' => 0,
+                ])->with('error', 'Não foi possível carregar os pokémons. Tente novamente mais tarde.');
+            }
+
+            $pokemons   = $data['results'] ?? [];
+            $total      = $data['count'] ?? 0;
+            $totalPages = ceil($total / 20);
+
+            return view('pokemon.index', [
+                'pokemons' => $pokemons,
+                'total' => $total,
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+            ]);
+        } catch (\Exception $e) {
+            return view('pokemon.index', [
+                'pokemons' => [],
+                'total' => 0,
+                'currentPage' => 1,
+                'totalPages' => 0,
+            ])->with('error', 'Ocorreu um erro ao carregar os pokémons. Tente novamente mais tarde.');
+        }
+    }
+
+    public function show(string $name)
+    {
+        try {
             $pokemon = $this->pokeApiClient->getPokemonByName($name);
-            
+
+            if (!$pokemon) {
+            return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
+            }
+
+            return view('pokemon.show', ['pokemon' => $pokemon]);
+        } catch (\Exception $e) {
+            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar o Pokémon. Tente novamente mais tarde.');
+        }
+    }
+
+    public function import(string $name)
+    {
+        $this->authorize('import', Pokemon::class);
+
+        try {
+            $pokemon = $this->pokeApiClient->getPokemonByName($name);
+
             if (!$pokemon) {
                 return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
             }
 
-            return view('pokemon.show', ['pokemon' => $pokemon]);
+            $this->pokemonImporter->import($pokemon);
+
+            return redirect()->route('pokemon.index')->with('success', 'Pokémon importado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao importar o Pokémon. Tente novamente mais tarde.');
         }
-
-        $data = $this->pokeApiClient->getPokemon($page);
-
-        if (!$data) {
-            return view('pokemon.index', [
-                'pokemons' => [],
-                'total' => 0,
-                'currentPage' => $page,
-                'totalPages' => 0,
-            ])->with('error', 'Não foi possível carregar os pokémons. Tente novamente mais tarde.');
-        }
-
-        $pokemons   = $data['results'] ?? [];
-        $total      = $data['count'] ?? 0;
-        $totalPages = ceil($total / 20);
-
-        return view('pokemon.index', [
-            'pokemons' => $pokemons,
-            'total' => $total,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-        ]);
-    }
-
-    public function show($name)
-    {
-        $pokemon = $this->pokeApiClient->getPokemonByName($name);
-
-        if (!$pokemon) {
-           return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
-        }
-
-        return view('pokemon.show', ['pokemon' => $pokemon]);
     }
 }

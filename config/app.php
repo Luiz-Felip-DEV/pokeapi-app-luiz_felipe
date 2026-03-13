@@ -124,5 +124,6 @@ return [
     ],
 
     'logo' => env('LOGO', 'images/logo.png'),
+    'base_url_poke_api' => env('BASE_URL_POKE_API', 'https://pokeapi.co/api/v2'),
 
 ];

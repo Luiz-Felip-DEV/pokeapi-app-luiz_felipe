@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/pokemons', [PokemonController::class, 'index'])->name('pokemon.index');
     Route::get('/pokemons/{name}', [PokemonController::class, 'show'])->name('pokemon.show');
+    Route::post('/pokemons/{name}/import', [PokemonController::class, 'import'])->name('pokemon.import');
 });
 
 require __DIR__.'/auth.php';

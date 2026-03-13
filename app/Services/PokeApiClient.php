@@ -9,7 +9,10 @@ use Illuminate\Http\Client\RequestException;
 
 class PokeApiClient
 {
-    private $baseUrlPoke = 'https://pokeapi.co/api/v2';
+    public function __construct()
+    {
+        $this->baseUrlPoke = config('app.base_url_poke_api');
+    }
 
     public function getPokemon(int $page = 1, int $limit = 20): ?array
     {

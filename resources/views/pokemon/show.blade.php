@@ -25,6 +25,13 @@
                     </span>
                 @endforeach
             </div>
+
+            <form method="POST" action="{{ route('pokemon.import', $pokemon['name']) }}" class="mt-6">
+                @csrf
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                    Importar para o banco
+                </button>
+            </form>
         </div>
     </div>
 </x-app-layout>
