@@ -19,7 +19,7 @@ class PokeApiClient
           try {
               $response = Http::timeout(10)->get("{$this->baseUrlPoke}/pokemon", [
                   'offset' => $offset,
-                  'limit' => $sim,
+                  'limit' => $limit,
               ]);
 
               $response->throw();
