@@ -153,6 +153,8 @@ class PokemonController extends Controller
 
     public function favorites(Request $request)
     {
+        $this->authorize('favorite', Pokemon::class);
+
         try {
             $page = $request->input('page', 1);
             $user = auth()->user();
@@ -172,6 +174,27 @@ class PokemonController extends Controller
             ]);
         } catch (\Exception $e) {
             return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar os favoritos. Tente novamente mais tarde.');
+        }
+    }
+
+    public function destroyFavorite(string $name)
+    {
+        $this->authorize('favorite', Pokemon::class);
+
+        try {
+            $pokemon = Pokemon::where('name', $name)->first();
+
+            if (!$pokemon) {
+                return redirect()->route('pokemon.favorites')->with('error', 'Pokémon não encontrado no banco de dados.');
+            }
+
+            $user = auth()->user();
+
+            $user->favorites()->detach($pokemon->id);
+
+            return redirect()->route('pokemon.favorites')->with('success', 'Pokémon removido dos favoritos!');
+        } catch (\Exception $e) {
+            return redirect()->route('pokemon.favorites')->with('error', 'Ocorreu um erro ao remover o Pokémon dos favoritos. Tente novamente mais tarde.');
         }
     }
 }
