@@ -8,7 +8,7 @@
         <a href="{{ route('pokemon.index') }}" class="text-blue-600 text-sm">Voltar</a>
 
         <div class="bg-white rounded shadow p-6 mt-4 text-center">
-            @if ($source === 'database')
+            @if ($source === 'database' || $source === 'favorites')
                 <img src="{{ $pokemon->sprite_url ?? '' }}" alt="{{ $pokemon->name }}" class="mx-auto w-32 h-32">
             @else
             <img src="{{ $pokemon['sprites']['front_default'] }}"
@@ -23,7 +23,7 @@
             </div>
 
             <div class="mt-4 flex justify-center gap-2">
-                @if ($source === 'database')
+                @if ($source === 'database' || $source === 'favorites')
                     @foreach ($pokemon->types as $type)
                         <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm capitalize">
                             {{ $type->name }}
@@ -38,7 +38,7 @@
                 @endif
             </div>
 
-            @if ($source !== 'database')
+            @if ($source !== 'database' && $source !== 'favorites')
                 @can('import', App\Models\Poke\Pokemon::class)
                     <form method="POST" action="{{ route('pokemon.import', $pokemon['name']) }}" class="mt-6">
                         @csrf
@@ -47,6 +47,18 @@
                         </button>
                     </form>
                 @endcan
+            @else
+                @if ($source !== 'favorites')
+                    @can('favorite', App\Models\Poke\Pokemon::class)
+                    <form method="POST" action="{{ route('pokemon.storeFavorite', $pokemon['name']) }}" class="mt-6">
+                        @csrf
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Adicionar aos favoritos
+                        </button>
+                    </form>
+                @endcan
+                @else
+                @endif
             @endif
         </div>
     </div>

@@ -15,6 +15,12 @@
                         Pokemons Importados
                     </x-nav-link>
                 @endcan
+
+                @can('favorite', App\Models\Poke\Pokemon::class)
+                    <x-nav-link class="ml-8" :href="route('pokemon.favorites')" :active="request()->routeIs('pokemon.favorites')">
+                        Favoritos
+                    </x-nav-link>
+                @endcan
             </div>
 
             <!-- Settings Dropdown -->

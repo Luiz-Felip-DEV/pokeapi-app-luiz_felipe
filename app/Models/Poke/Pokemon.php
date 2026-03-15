@@ -28,6 +28,6 @@ class Pokemon extends Model
 
     public function favoritedBy()
     {
-        return $this->belongsToMany(User::class, 'favorites', 'pokemon_id', 'user_id');
+        return $this->belongsToMany(User::class, 'favorites', 'pokemon_id', 'user_id')->withTimestamps();
     }
 }

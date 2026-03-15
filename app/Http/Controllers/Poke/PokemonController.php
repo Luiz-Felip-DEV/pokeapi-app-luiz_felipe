@@ -89,14 +89,14 @@ class PokemonController extends Controller
         try {
             $source = $request->input('source') ?? null;
 
-            if ($source === 'database') {
+            if ($source === 'database' || $source === 'favorites') {
                 $pokemon = Pokemon::with('types')->where('name', $name)->first();
 
                 if (!$pokemon) {
                     return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado no banco de dados.');
                 }
 
-                return view('pokemon.show', ['pokemon' => $pokemon, 'source' => 'database']);
+                return view('pokemon.show', ['pokemon' => $pokemon, 'source' => $source]);
             }
 
             $pokemon = $this->pokeApiClient->getPokemonByName($name);
@@ -127,6 +127,51 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('success', 'Pokémon importado com sucesso!');
         } catch (\Exception $e) {
             return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao importar o Pokémon. Tente novamente mais tarde.');
+        }
+    }
+
+    public function storeFavorite(string $name)
+    {
+        $this->authorize('favorite', Pokemon::class);
+
+        try {
+            $pokemon = Pokemon::where('name', $name)->first();
+
+            if (!$pokemon) {
+                return redirect()->route('pokemon.index', ['name' => $name])->with('error', 'Pokémon não encontrado no banco de dados. Importe-o antes de favoritar.');
+            }
+
+            $user = auth()->user();
+
+            $user->favorites()->syncWithoutDetaching($pokemon->id);
+
+            return redirect()->route('pokemon.index', ['name' => $name])->with('success', 'Pokémon adicionado aos favoritos!');
+        } catch (\Exception $e) {
+            return redirect()->route('pokemon.index', ['name' => $name])->with('error', 'Ocorreu um erro ao adicionar o Pokémon aos favoritos. Tente novamente mais tarde.');
+        }
+    }
+
+    public function favorites(Request $request)
+    {
+        try {
+            $page = $request->input('page', 1);
+            $user = auth()->user();
+
+            $pokemons = $user->favorites()->with('types')->orderBy('name')->paginate(20, ['*'], 'page', $page);
+
+            if ($pokemons->isEmpty()) {
+                return redirect()->route('pokemon.index')->with('info', 'Você ainda não tem pokémons favoritos. Explore e adicione seus favoritos!');
+            }
+
+            return view('pokemon.index', [
+                'pokemons'    => $pokemons->items(),
+                'total'       => $pokemons->total(),
+                'currentPage' => $pokemons->currentPage(),
+                'totalPages'  => $pokemons->lastPage(),
+                'source'      => 'favorites',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar os favoritos. Tente novamente mais tarde.');
         }
     }
 }

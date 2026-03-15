@@ -66,6 +66,6 @@ class User extends Authenticatable
 
     public function favorites()
     {
-        return $this->belongsToMany(Pokemon::class, 'favorites');
+        return $this->belongsToMany(Pokemon::class, 'favorites', 'user_id', 'pokemon_id')->withTimestamps();
     }
 }
