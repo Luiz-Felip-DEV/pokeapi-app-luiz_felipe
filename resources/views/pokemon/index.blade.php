@@ -19,7 +19,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @forelse ($pokemons as $pokemon)
                 @if ($source === 'database')
-                    <a href="{{ route('pokemon.show', $pokemon->name) }}"
+                    <a href="{{ route('pokemon.show', ['name' => $pokemon->name, 'source' => 'database']) }}"
                        class="bg-white rounded shadow p-4 text-center hover:shadow-md transition">
                         <img src="{{ $pokemon->sprite_url ?? '' }}"
                              alt="{{ $pokemon->name }}" class="mx-auto w-20 h-20">
@@ -30,7 +30,7 @@
                         $pokeName = $pokemon['name'];
                         $id = basename(rtrim($pokemon['url'], '/'));
                     @endphp
-                    <a href="{{ route('pokemon.show', $pokeName) }}"
+                    <a href="{{ route('pokemon.show', ['name' => $pokeName, 'source' => 'api']) }}"
                        class="bg-white rounded shadow p-4 text-center hover:shadow-md transition">
                         <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ $id }}.png"
                              alt="{{ $pokeName }}" class="mx-auto w-20 h-20">

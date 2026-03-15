@@ -50,7 +50,7 @@ class PokemonController extends Controller
                     return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
                 }
  
-                return view('pokemon.show', ['pokemon' => $pokemon]);
+                return view('pokemon.show', ['pokemon' => $pokemon, 'source' => 'api']);
             }
  
             $data = $this->pokeApiClient->getPokemon($page);
@@ -84,16 +84,28 @@ class PokemonController extends Controller
         }
     }
 
-    public function show(string $name)
+    public function show(string $name, Request $request)
     {
         try {
+            $source = $request->input('source') ?? null;
+
+            if ($source === 'database') {
+                $pokemon = Pokemon::with('types')->where('name', $name)->first();
+
+                if (!$pokemon) {
+                    return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado no banco de dados.');
+                }
+
+                return view('pokemon.show', ['pokemon' => $pokemon, 'source' => 'database']);
+            }
+
             $pokemon = $this->pokeApiClient->getPokemonByName($name);
 
             if (!$pokemon) {
             return redirect()->route('pokemon.index')->with('error', 'Pokémon não encontrado.');
             }
 
-            return view('pokemon.show', ['pokemon' => $pokemon]);
+            return view('pokemon.show', ['pokemon' => $pokemon, 'source' => 'api']);
         } catch (\Exception $e) {
             return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar o Pokémon. Tente novamente mais tarde.');
         }
