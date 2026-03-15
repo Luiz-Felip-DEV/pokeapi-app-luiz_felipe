@@ -25,4 +25,9 @@ class PokemonPolicy
     {
         return in_array($user->role, ['editor', 'admin']);
     }
+
+    public function users(User $user): bool
+    {
+        return $user->isAdmin();
+    }
 }

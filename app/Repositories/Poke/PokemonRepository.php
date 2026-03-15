@@ -305,4 +305,29 @@ class PokemonRepository
             );
         }
     }
+
+    public function users()
+    {
+        try {
+            $users = User::whereKeyNot(auth()->id())->orderBy('name')->get();
+
+            if ($users->isEmpty()) {
+                return array (
+                    'error' => false,
+                    'message' => 'Nenhum usuário encontrado.',
+                );
+            }
+
+            return array (
+                'error' => false,
+                'users' => $users,
+                'message' => 'Usuários carregados com sucesso.',
+            );
+        } catch (\Exception $e) {
+            return array (
+                'error' => true,
+                'message' => 'Ocorreu um erro ao carregar os usuários. Tente novamente mais tarde.'
+            );
+        }
+    }
 }

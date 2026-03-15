@@ -21,6 +21,12 @@
                         Favoritos
                     </x-nav-link>
                 @endcan
+
+                @can('users', App\Models\Poke\Pokemon::class)
+                    <x-nav-link class="ml-8" :href="route('pokemon.users')" :active="request()->routeIs('pokemon.users')">
+                        Usuários
+                    </x-nav-link>
+                @endcan
             </div>
 
             <!-- Settings Dropdown -->

@@ -29,7 +29,7 @@ class PokemonController extends Controller
         $result = $this->pokemonRepository->index($user, $name, $source, $page);
 
         if ($result['error']) {
-            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar os pokémons. Tente novamente mais tarde.');
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
         return view('pokemon.index', [
@@ -51,7 +51,7 @@ class PokemonController extends Controller
         $result = $this->pokemonRepository->show($name, $source);
 
         if ($result['error']) {
-            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar os detalhes do Pokémon. Tente novamente mais tarde.');
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
         return view('pokemon.show', [
@@ -73,7 +73,7 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.index')->with('success', 'Pokémon importado com sucesso!');
+        return redirect()->route('pokemon.index')->with('success', $result['message']);
     }
 
     /**
@@ -89,7 +89,7 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.index')->with('success', 'Pokémon adicionado aos favoritos!');
+        return redirect()->route('pokemon.index')->with('success', $result['message']);
     }
 
     /**
@@ -102,7 +102,7 @@ class PokemonController extends Controller
         $result = $this->pokemonRepository->favorites();
 
         if ($result['error']) {
-            return redirect()->route('pokemon.index')->with('error', 'Ocorreu um erro ao carregar os pokémons favoritos. Tente novamente mais tarde.');
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
         return view('pokemon.index', [
@@ -127,7 +127,7 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.favorites')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.favorites')->with('success', 'Pokémon removido dos favoritos!');
+        return redirect()->route('pokemon.favorites')->with('success', $result['message']);
     }
 
     /**
@@ -143,6 +143,24 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.index')->with('success', 'Pokémon removido com sucesso!');
+        return redirect()->route('pokemon.index')->with('success', $result['message']);
+    }
+
+    /**
+     * Exibe a lista de usuários do sistema, somente a role de administrador pode acessar essa funcionalidade.
+    */
+    public function users()
+    {
+        $this->authorize('users', Pokemon::class);
+
+        $result = $this->pokemonRepository->users();
+
+        if ($result['error']) {
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
+        }
+
+        return view('pokemon.users', [
+            'users' => $result['users']
+        ]);
     }
 }
