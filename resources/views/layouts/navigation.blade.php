@@ -9,6 +9,12 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
+                
+                @can('import', App\Models\Poke\Pokemon::class)
+                    <x-nav-link class="ml-8" :href="route('pokemon.index', ['source' => 'database'])" :active="request()->routeIs('pokemon.*')">
+                        Pokemons Importados
+                    </x-nav-link>
+                @endcan
             </div>
 
             <!-- Settings Dropdown -->

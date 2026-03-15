@@ -19,12 +19,13 @@ class PokemonController extends Controller
 
     public function index(SearchPokemonRequest $request)
     {
-        $user = auth()->user();
-        $page = $request->input('page', 1);
-        $name = $request->input('name');
+        $user   = auth()->user();
+        $page   = $request->input('page', 1);
+        $name   = $request->input('name');
+        $source = $request->input('source') ?? null;
  
         try {
-            if ($user->isViewer()) {
+            if ($user->isViewer() || $source == 'database') {
                 $pokemons = Pokemon::with('types')->orderBy('name');
  
                 if ($name) {
