@@ -16,6 +16,9 @@ class PokemonController extends Controller
         $this->pokemonRepository = $pokemonRepository;
     }
 
+    /**
+     * Lista os pokémons, podendo ser filtrados por nome e fonte (API ou banco de dados). Se o usuário for um viewer, apenas os pokémons do banco de dados serão exibidos.
+    */
     public function index(SearchPokemonRequest $request)
     {
         $user   = auth()->user();
@@ -38,6 +41,9 @@ class PokemonController extends Controller
         ]);
     }
 
+    /**
+     * Exibe os detalhes de um pokémon específico, buscando as informações na API ou no banco de dados, dependendo da fonte especificada
+    */
     public function show(string $name, ShowPokemonRequest $request)
     {
         $source = $request->input('source', 'api');
@@ -54,6 +60,9 @@ class PokemonController extends Controller
         ]);
     }
 
+    /**
+     * Importa um pokémon da API para o banco de dados, somente as roles autorizadas podem fazer isso.
+    */
     public function import(string $name)
     {
         $this->authorize('import', Pokemon::class);
@@ -67,6 +76,9 @@ class PokemonController extends Controller
         return redirect()->route('pokemon.index')->with('success', 'Pokémon importado com sucesso!');
     }
 
+    /**
+     * Adiciona um pokémon aos favoritos do usuário autenticado.
+    */
     public function storeFavorite(string $name)
     {
         $this->authorize('favorite', Pokemon::class);
@@ -80,6 +92,9 @@ class PokemonController extends Controller
         return redirect()->route('pokemon.index')->with('success', 'Pokémon adicionado aos favoritos!');
     }
 
+    /**
+     * Exibe a lista de pokémons favoritos do usuário autenticado.
+    */
     public function favorites(Request $request)
     {
         $this->authorize('favorite', Pokemon::class);
@@ -99,6 +114,9 @@ class PokemonController extends Controller
         ]);
     }
 
+    /**
+     * Remove o pokémon dos favoritos do usuário autenticado.
+    */
     public function destroyFavorite(string $name)
     {
         $this->authorize('favorite', Pokemon::class);
@@ -112,6 +130,9 @@ class PokemonController extends Controller
         return redirect()->route('pokemon.favorites')->with('success', 'Pokémon removido dos favoritos!');
     }
 
+    /**
+     * Remove um pokémon importado do banco de dados, somente a role de administrador pode fazer isso.
+    */
     public function destroyImported(string $name)
     {
         $this->authorize('delete', Pokemon::class);
