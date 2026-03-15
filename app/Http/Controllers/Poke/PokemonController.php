@@ -111,4 +111,17 @@ class PokemonController extends Controller
 
         return redirect()->route('pokemon.favorites')->with('success', 'Pokémon removido dos favoritos!');
     }
+
+    public function destroyImported(string $name)
+    {
+        $this->authorize('delete', Pokemon::class);
+
+        $result = $this->pokemonRepository->destroyImported($name);
+
+        if ($result['error']) {
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
+        }
+
+        return redirect()->route('pokemon.index')->with('success', 'Pokémon removido com sucesso!');
+    }
 }

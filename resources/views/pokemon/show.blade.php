@@ -56,6 +56,16 @@
                             Adicionar aos favoritos
                         </button>
                     </form>
+
+                    @can('delete', App\Models\Poke\Pokemon::class)
+                        <form method="POST" action="{{ route('pokemon.destroyImported', $pokemon['name']) }}" class="mt-6">
+                            @method('DELETE')
+                            @csrf
+                            <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                                Excluir importado
+                            </button>
+                        </form>
+                    @endcan
                 @endcan
                 @else
                     @can('favorite', App\Models\Poke\Pokemon::class)

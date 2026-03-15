@@ -279,4 +279,30 @@ class PokemonRepository
             );
         }
     }
+
+    public function destroyImported(string $name)
+    {
+        try {
+            $pokemon = Pokemon::where('name', $name)->first();
+
+            if (!$pokemon) {
+                return array (
+                    'error' => true,
+                    'message' => 'Pokémon não encontrado no banco de dados.',
+                );
+            }
+
+            $pokemon->delete();
+
+            return array (
+                'error' => false,
+                'message' => 'Pokémon removido com sucesso!',
+            );
+        } catch (\Exception $e) {
+            return array (
+                'error' => true,
+                'message' => 'Ocorreu um erro ao remover o Pokémon. Tente novamente mais tarde.'
+            );
+        }
+    }
 }

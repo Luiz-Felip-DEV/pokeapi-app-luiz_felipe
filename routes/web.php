@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pokemons/{name}/import', [PokemonController::class, 'import'])->name('pokemon.import');
     Route::post('/pokemons/{name}/favorite', [PokemonController::class, 'storeFavorite'])->name('pokemon.storeFavorite');
     Route::delete('/pokemons/{name}/favorite', [PokemonController::class, 'destroyFavorite'])->name('pokemon.destroyFavorite');
+    Route::delete('/pokemons/{name}/imported', [PokemonController::class, 'destroyImported'])->name('pokemon.destroyImported');
 });
 
 require __DIR__.'/auth.php';
