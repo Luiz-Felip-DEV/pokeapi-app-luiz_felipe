@@ -9,6 +9,12 @@
             </div>
         @endif
 
+        @if (session('success'))
+            <div class="bg-green-100 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        
         <form method="GET" action="{{ route('pokemon.index') }}" class="mb-6 flex gap-2">
             <input type="text" name="name" value="{{ request('name') }}"
                 placeholder="Buscar por nome..."

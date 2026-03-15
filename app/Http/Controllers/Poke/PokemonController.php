@@ -64,7 +64,7 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.index', ['name' => $name])->with('success', 'Pokémon importado com sucesso!');
+        return redirect()->route('pokemon.index')->with('success', 'Pokémon importado com sucesso!');
     }
 
     public function storeFavorite(string $name)
@@ -74,10 +74,10 @@ class PokemonController extends Controller
         $result = $this->pokemonRepository->storeFavorite($name);
 
         if ($result['error']) {
-            return redirect()->route('pokemon.index', $name)->with('error', $result['message']);
+            return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return redirect()->route('pokemon.index', $name)->with('success', 'Pokémon adicionado aos favoritos!');
+        return redirect()->route('pokemon.index')->with('success', 'Pokémon adicionado aos favoritos!');
     }
 
     public function favorites(Request $request)
@@ -91,11 +91,11 @@ class PokemonController extends Controller
         }
 
         return view('pokemon.index', [
-            'pokemons' => $result['pokemons'],
-            'total'    => $result['total'],
+            'pokemons'    => $result['pokemons'],
+            'total'       => $result['total'],
             'currentPage' => $result['currentPage'],
             'totalPages'  => $result['totalPages'],
-            'source'   => $result['source'],
+            'source'      => $result['source'],
         ]);
     }
 
