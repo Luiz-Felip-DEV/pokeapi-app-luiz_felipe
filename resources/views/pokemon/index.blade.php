@@ -28,11 +28,11 @@
                 @else
                     @php
                         $pokeName = $pokemon['name'];
-                        $id = basename(rtrim($pokemon['url'], '/'));
+                        $urlImg   = $pokemon['id'] ?? basename(rtrim($pokemon['url'], '/'));
                     @endphp
                     <a href="{{ route('pokemon.show', ['name' => $pokeName, 'source' => 'api']) }}"
                        class="bg-white rounded shadow p-4 text-center hover:shadow-md transition">
-                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ $id }}.png"
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ $urlImg }}.png"
                              alt="{{ $pokeName }}" class="mx-auto w-20 h-20">
                         <p class="mt-2 capitalize font-medium">{{ $pokeName }}</p>
                     </a>
