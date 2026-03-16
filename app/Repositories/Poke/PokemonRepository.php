@@ -355,4 +355,31 @@ class PokemonRepository
             );
         }
     }
+
+    public function updateUserRole($id, $role)
+    {
+        try {
+            $user = User::find($id);
+
+            if (!$user) {
+                return array (
+                    'error' => true,
+                    'message' => 'Usuário não encontrado.',
+                );
+            }
+
+            $user->role = $role;
+            $user->save();
+
+            return array (
+                'error' => false,
+                'message' => 'Função do usuário atualizada com sucesso.',
+            );
+        } catch (\Exception $e) {
+            return array (
+                'error' => true,
+                'message' => 'Ocorreu um erro ao atualizar a função do usuário. Tente novamente mais tarde.'
+            );
+        }
+    }
 }

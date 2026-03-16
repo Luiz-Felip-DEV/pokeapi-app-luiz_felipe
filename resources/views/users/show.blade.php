@@ -21,6 +21,32 @@
                 </p>
             </div>
 
+            <form method="POST" action="{{ route('users.updateRole', $user->id) }}">
+                @csrf
+                @method('PUT')
+
+                <label class="block text-sm font-medium mb-2">
+                    Alterar Role
+                </label>
+
+                <select name="role"
+                        class="border rounded px-3 py-2 w-full mb-4">
+                    <option value="viewer" {{ $user->role === 'viewer' ? 'selected' : '' }}>
+                        Viewer
+                    </option>
+                    <option value="editor" {{ $user->role === 'editor' ? 'selected' : '' }}>
+                        Editor
+                    </option>
+                    <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>
+                        Admin
+                    </option>
+                </select>
+
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                    Atualizar Role
+                </button>
+            </form>
+
         </div>
     </div>
 </x-app-layout>

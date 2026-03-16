@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/pokemons/{name}/imported', [PokemonController::class, 'destroyImported'])->name('pokemon.destroyImported');
     Route::get('/users', [PokemonController::class, 'users'])->name('users.users');
     Route::get('/users/{id}', [PokemonController::class, 'showUser'])->name('users.show');
+    Route::put('/users/{id}/role', [PokemonController::class, 'updateUserRole'])->name('users.updateRole');
 });
 
 require __DIR__.'/auth.php';

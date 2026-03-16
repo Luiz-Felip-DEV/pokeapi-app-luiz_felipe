@@ -164,6 +164,9 @@ class PokemonController extends Controller
         ]);
     }
 
+    /**
+     * Exibe os detalhes de um usuário específico, somente a role de administrador pode acessar essa funcionalidade.
+    */
     public function showUser($id)
     {
         $this->authorize('users', Pokemon::class);
@@ -178,5 +181,23 @@ class PokemonController extends Controller
             'user'    => $result['user'],
             'message' => $result['message']
         ]);
+    }
+
+    /**
+     * Atualiza a role de um usuário específico, somente a role de administrador pode acessar essa funcionalidade.
+    */
+    public function updateUserRole(Request $request, $id)
+    {
+        $this->authorize('users', Pokemon::class);
+
+        $role = $request->input('role');
+
+        $result = $this->pokemonRepository->updateUserRole($id, $role);
+
+        if ($result['error']) {
+            return redirect()->route('users.users', $id)->with('error', $result['message']);
+        }
+
+        return redirect()->route('users.users', $id)->with('success', $result['message']);
     }
 }
