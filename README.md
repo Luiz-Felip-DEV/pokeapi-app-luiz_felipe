@@ -1,59 +1,201 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎮 PokeAPI App — Luiz Felipe
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Uma aplicação web construída com **Laravel** que consome a [PokéAPI](https://pokeapi.co/) para exibir e gerenciar informações de Pokémon, com autenticação de usuários e interface responsiva com Tailwind CSS.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tecnologias
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP** com **Laravel** (framework principal)
+- **Tailwind CSS** (estilização)
+- **Vite** (bundler de assets)
+- **Docker** (containerização)
+- **MySQL** (banco de dados, via Docker)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Estrutura do Projeto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/
+│   │   │   └── AuthenticatedSessionController.php
+│   │   └── Poke/
+│   │       ├── PokemonController.php
+│   │       └── Controller.php
+│   └── Requests/
+│       ├── Auth/
+│       │   └── LoginRequest.php
+│       └── Poke/
+│           ├── SearchPokemonRequest.php
+│           └── ShowPokemonRequest.php
+├── Models/
+│   ├── Poke/
+│   │   ├── Pokemon.php
+│   │   └── Type.php
+│   └── User.php
+├── Policies/Poke/
+│   └── PokemonPolicy.php
+├── Providers/
+│   └── AppServiceProvider.php
+├── Repositories/Poke/
+│   └── PokemonRepository.php
+└── Services/
+    ├── PokeApiClient.php
+    └── PokemonImporter.php
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+resources/
+└── views/
+    ├── auth/
+    │   └── login.blade.php
+    ├── components/
+    ├── layouts/
+    ├── pokemon/
+    │   ├── index.blade.php
+    │   └── show.blade.php
+    └── users/
+        ├── show.blade.php
+        └── users.blade.php
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Requisitos
 
-### Premium Partners
+- PHP >= 8.1
+- Composer
+- Node.js >= 18 e npm
+- Docker e Docker Compose *(opcional, mas recomendado)*
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## Instalação
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Com Docker (recomendado)
 
-## Code of Conduct
+```bash
+# Clone o repositório
+git clone https://github.com/Luiz-Felip-DEV/pokeapi-app-luiz_felipe.git
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Copie o arquivo de variáveis de ambiente
+cp .env.example .env
 
-## Security Vulnerabilities
+# Suba os containers
+docker compose up -d --build
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Instale as dependências PHP dentro do container
+docker compose exec app composer install
 
-## License
+# Gere a chave da aplicação
+docker compose exec app php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Execute as migrations
+docker compose exec app php artisan migrate
+
+# Execute as seeds
+docker compose exec app php artisan db:seed
+
+# Instale as dependências JS e compile os assets
+docker compose exec app npm install && npm run build
+```
+
+### Sem Docker
+
+```bash
+# Clone o repositório
+git clone https://github.com/Luiz-Felip-DEV/pokeapi-app-luiz_felipe.git
+
+# Copie o arquivo de variáveis de ambiente
+cp .env.example .env
+
+# Configure o banco de dados no arquivo .env
+
+# Instale as dependências PHP
+composer install
+
+# Gere a chave da aplicação
+php artisan key:generate
+
+# Execute as migrations
+php artisan migrate
+
+# Execute as seeds
+php artisan db:seed
+
+# Instale as dependências JS e compile os assets
+npm install && npm run dev
+
+# Inicie o servidor de desenvolvimento
+php artisan serve
+```
+
+A aplicação estará disponível em `http://localhost:8000/login`.
+
+---
+
+### Acessar a aplicação
+
+1. Acesse `http://localhost:8000/login`
+2. Faça login com suas credenciais
+3. Navegue pela listagem de Pokémons
+4. Use a busca para filtrar por nome ou tipo
+
+---
+
+## Funcionalidades
+
+- ✅ **Autenticação** — Login e sessão de usuários
+- ✅ **Listagem de Pokémons** — Exibe todos os Pokémon importados
+- ✅ **Busca** — Pesquisa por nome ou tipo de Pokémon
+- ✅ **Detalhes do Pokémon** — Página individual com informações completas
+- ✅ **Integração com PokéAPI** — Importação via `PokeApiClient` e `PokemonImporter`
+- ✅ **Policies** — Controle de acesso baseado em políticas do Laravel
+- ✅ **Repository Pattern** — Abstração da camada de dados
+- ✅ **Gerenciamento de Usuários** — Visualização de perfis
+
+---
+
+## Docker
+
+O projeto inclui `Dockerfile` e `docker-compose.yml` prontos para uso.
+
+```bash
+# Subir os containers
+docker-compose up -d
+
+# Parar os containers
+docker-compose down
+
+# Ver logs
+docker-compose logs -f app
+```
+
+## Rotas
+
+GET / — Redireciona o usuário autenticado direto para a listagem de Pokémons.
+
+GET /pokemons — Lista todos os Pokémons que já foram importados para o banco de dados.
+
+GET /pokemons/favorites — Lista apenas os Pokémons marcados como favoritos pelo usuário.
+
+GET /pokemons/{name} — Exibe a página de detalhes de um Pokémon específico, buscando pelo nome.
+
+POST /pokemons/{name}/import — Importa um Pokémon da PokéAPI e salva no banco de dados local.
+
+POST /pokemons/{name}/favorite — Adiciona um Pokémon à lista de favoritos do usuário.
+
+DELETE /pokemons/{name}/favorite — Remove um Pokémon da lista de favoritos do usuário.
+
+DELETE /pokemons/{name}/imported — Remove um Pokémon importado do banco de dados local.
+
+GET /users — Lista todos os usuários cadastrados na aplicação.
+
+GET /users/{id} — Exibe o perfil de um usuário específico pelo ID.
+
+PUT /users/{id}/role — Atualiza o papel (role) de um usuário, como promover a administrador.
+
+## Url Publica do Projeto
+
+https://pokeapi-app-luiz-felipe-master-8qonod.laravel.cloud/login
+
+> Desenvolvido por **Luiz Felipe**
