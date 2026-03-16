@@ -198,4 +198,15 @@ PUT /users/{id}/role — Atualiza o papel (role) de um usuário, como promover a
 
 https://pokeapi-app-luiz-felipe-master-8qonod.laravel.cloud/login
 
+## Usuários
+
+email: admin@test.com
+senha: admin
+
+email: editor@test.com
+senha: editor
+
+email: viewer@test.com
+senha: viewer
+
 > Desenvolvido por **Luiz Felipe**
