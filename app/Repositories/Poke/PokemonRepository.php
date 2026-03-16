@@ -3,8 +3,6 @@
 namespace App\Repositories\Poke;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use App\Services\PokeApiClient;
 use App\Services\PokemonImporter;
 use App\Models\Poke\Pokemon;
