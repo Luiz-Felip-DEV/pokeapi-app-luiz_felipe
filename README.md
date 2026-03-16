@@ -90,13 +90,15 @@ docker compose exec app composer install
 docker compose exec app php artisan key:generate
 
 # Execute as migrations
-docker compose exec app php artisan migrate
+docker compose exec app php artisan migrate:fresh
 
 # Execute as seeds
 docker compose exec app php artisan db:seed
 
 # Instale as dependências JS e compile os assets
-docker compose exec app npm install && npm run build
+docker compose exec app npm install
+
+docker compose exec app npm run build
 ```
 
 ### Sem Docker
