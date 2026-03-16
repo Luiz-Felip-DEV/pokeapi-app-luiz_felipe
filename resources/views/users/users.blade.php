@@ -37,6 +37,10 @@
                             {{ $user->role }}
                         </span>
 
+                        <a href="{{ route('users.show', $user->id) }}"
+                           class="text-blue-600 text-sm hover:underline">
+                            Ver
+                        </a>
                     </div>
 
                 </div>

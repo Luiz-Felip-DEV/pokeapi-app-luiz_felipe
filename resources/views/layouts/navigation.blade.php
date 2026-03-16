@@ -23,7 +23,7 @@
                 @endcan
 
                 @can('users', App\Models\Poke\Pokemon::class)
-                    <x-nav-link class="ml-8" :href="route('pokemon.users')" :active="request()->routeIs('pokemon.users')">
+                    <x-nav-link class="ml-8" :href="route('users.users')" :active="request()->routeIs('users.users')">
                         Usuários
                     </x-nav-link>
                 @endcan

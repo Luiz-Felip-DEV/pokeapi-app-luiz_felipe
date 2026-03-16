@@ -159,8 +159,24 @@ class PokemonController extends Controller
             return redirect()->route('pokemon.index')->with('error', $result['message']);
         }
 
-        return view('pokemon.users', [
+        return view('users.users', [
             'users' => $result['users']
+        ]);
+    }
+
+    public function showUser($id)
+    {
+        $this->authorize('users', Pokemon::class);
+
+        $result = $this->pokemonRepository->showUser($id);
+
+        if ($result['error']) {
+            return redirect()->route('users.users')->with('error', $result['message']);
+        }
+
+        return view('users.show', [
+            'user'    => $result['user'],
+            'message' => $result['message']
         ]);
     }
 }

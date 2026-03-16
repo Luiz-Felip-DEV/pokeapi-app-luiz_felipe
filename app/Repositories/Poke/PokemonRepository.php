@@ -330,4 +330,29 @@ class PokemonRepository
             );
         }
     }
+
+    public function showUser($id)
+    {
+        try {
+            $user = User::find($id);
+
+            if (!$user) {
+                return array (
+                    'error' => true,
+                    'message' => 'Usuário não encontrado.',
+                );
+            }
+
+            return array (
+                'error' => false,
+                'user' => $user,
+                'message' => 'Usuário carregado com sucesso.',
+            );
+        } catch (\Exception $e) {
+            return array (
+                'error' => true,
+                'message' => 'Ocorreu um erro ao carregar o usuário. Tente novamente mais tarde.'
+            );
+        }
+    }
 }
